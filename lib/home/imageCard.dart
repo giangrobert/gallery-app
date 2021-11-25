@@ -5,33 +5,14 @@ class ContactCard extends StatelessWidget {
   String imageTitle = "";
   String imageDescription = "";
   String imageImg = "";
+  String tiporedt = "";
 
-  ContactCard(this.imageTitle, this.imageDescription, this.imageImg);
+  ContactCard(
+      this.imageTitle, this.imageDescription, this.imageImg, this.tiporedt);
 
   @override
   Widget build(BuildContext context) {
-    return /*Card(
-      child: Column(
-        children: [
-          Text(this.contactName,
-              style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 32.0,
-                  fontWeight: FontWeight.bold)),
-          Text(this.contactPhone,
-              style: TextStyle(
-                color: Colors.black26,
-                fontSize: 22.0,
-              )),
-          Text(this.contactEmail,
-              style: TextStyle(
-                color: Colors.black26,
-                fontSize: 22.0,
-              )),
-        ],
-      ),
-    )*/
-        GFCard(
+    return GFCard(
       boxFit: BoxFit.cover,
       title: GFListTile(
         avatar: GFAvatar(
@@ -46,9 +27,26 @@ class ContactCard extends StatelessWidget {
           style: TextStyle(fontSize: 15.0),
         ),
       ),
+      content: Column(
+        children: [
+          Image.network(imageImg),
+        ],
+      ),
       buttonBar: GFButtonBar(
         children: <Widget>[
-          Image.network(imageImg),
+          Row(
+            children: [
+              GFButton(
+                onPressed: () {},
+                text: "Ubicación",
+                icon: Icon(Icons.remove_red_eye),
+                shape: GFButtonShape.pills,
+                color: Colors.black,
+              ),
+              SizedBox(width: 12.0),
+              Text(tiporedt),
+            ],
+          ),
         ],
       ),
     );

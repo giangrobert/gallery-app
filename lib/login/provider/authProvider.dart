@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class AuthProvider {
   Future<AuthResponse> obtenerToken(String email, String password) async {
-    var url = Uri.parse("http://10.0.2.2:8282/api/usuario/login");
+    var url = Uri.parse("https://igalery.herokuapp.com/api/usuario/login");
 
     var responseHttp =
         await http.post(url, body: {'email': email, 'password': password});

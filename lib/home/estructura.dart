@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:convert' as convert;
+import 'package:app_contactos/widgets/widget_conectid.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:app_contactos/createimage/estructura.dart';
 import 'package:app_contactos/home/imageCard.dart';
 import 'package:app_contactos/home/model/imagesResponse.dart';
 
 import 'package:app_contactos/home/provider/imagesProviderAPI.dart';
-import 'package:app_contactos/home/provider/imagesProviderDB.dart';
+
 import 'package:app_contactos/login/estructura.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -33,12 +36,13 @@ class _MyImagessPageState extends State<MyImagessPage> {
   @override
   void initState() {
     super.initState();
+    //obtenerListadoImages();
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       if (result != ConnectivityResult.none) {
-        sincronizarImagesBackend();
+        //sincronizarImagesBackend();
       }
     });
   }
@@ -51,14 +55,7 @@ class _MyImagessPageState extends State<MyImagessPage> {
       appBar: GFAppBar(
         backgroundColor: Colors.black87,
         automaticallyImplyLeading: false,
-        leading: GFIconButton(
-          icon: Icon(
-            Icons.message,
-            color: Colors.white,
-          ),
-          onPressed: () {},
-          type: GFButtonType.transparent,
-        ),
+        leading: BtnConectid(),
         title: Text("Mi Gallery"),
         actions: <Widget>[
           GFIconButton(
@@ -74,12 +71,15 @@ class _MyImagessPageState extends State<MyImagessPage> {
         ],
       ),
       body: Center(
-          child: ListView(children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: this.listadoImagesWidgets,
+        child: ListView(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: this.listadoImagesWidgets,
+            ),
+          ],
         ),
-      ])),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.pushNamed(context, CreateImagePage.ruta);
@@ -98,37 +98,35 @@ class _MyImagessPageState extends State<MyImagessPage> {
     var token = await prefs.getString('token');
 
     ImagesProviderApi ipapi = ImagesProviderApi();
-    ImagesProviderDb ipdb = ImagesProviderDb();
-    await ipdb.init();
-
-    ConnectivityResult connectiivityResult =
-        await _connectivity.checkConnectivity();
-
-    if (connectiivityResult != ConnectivityResult.none) {
-      ImagesResponse irapi = await ipapi.obtenerListadoImages(token.toString());
-
-      for (int i = 0; i < irapi.galleryList.length; i++) {
-        ImagesResponse temp =
-            await ipdb.obtenerImagesPorId(irapi.galleryList[i].id);
-        if (temp.galleryList.length == 0) {
-          ipdb.agregarImage(irapi.galleryList[i]);
-        }
-      }
-    }
-
-    ImagesResponse irbd = await ipdb.obtenerImages();
 
     List<Widget> imagesCargados = <Widget>[];
 
-    for (int i = 0; i < irbd.galleryList.length; i++) {
-      Widget wd = ContactCard(irbd.galleryList[i].title,
-          irbd.galleryList[i].img, irbd.galleryList[i].img);
+    ImagesResponse irbd = await ipapi.obtenerListadoImages(token.toString());
 
-      imagesCargados.add(wd);
+    for (int i = 0; i < irbd.galleryList.length; i++) {
+      print('Mi title ${irbd.galleryList.length}');
+      var imgaeExist = '';
+      var url = Uri.parse(
+          'https://igalery.herokuapp.com/api/gallery/obtenerimagen/${irbd.galleryList[i].img.toString()}');
+      var response = await http.get(url);
+      print('Response body: ${response.body.toString()}');
+      if (response.statusCode == 404) {
+        imgaeExist = '';
+      } else {
+        imgaeExist =
+            'https://igalery.herokuapp.com/api/gallery/obtenerimagen/${irbd.galleryList[i].img.toString()}';
+        Widget wd = ContactCard(
+            irbd.galleryList[i].title!,
+            irbd.galleryList[i].description!,
+            imgaeExist,
+            irbd.galleryList[i].tipoRed!);
+        imagesCargados.add(wd);
+      }
     }
 
     setState(() {
       this.listadoImagesWidgets = imagesCargados;
+      print(imagesCargados);
     });
   }
 
@@ -136,26 +134,5 @@ class _MyImagessPageState extends State<MyImagessPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
     Navigator.pushNamed(context, MyLoginPage.ruta);
-  }
-
-  void sincronizarImagesBackend() async {
-    print("Se inicia la sincronizacion");
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = await prefs.getString('token');
-
-    ImagesProviderDb ipdb = ImagesProviderDb();
-    await ipdb.init();
-
-    ImagesResponse ir = await ipdb.obtenerImagesPendientesPorSincronizar();
-
-    ImagesProviderApi ipapi = ImagesProviderApi();
-
-    for (int i = 0; i < ir.galleryList.length; i++) {
-      await ipapi.crearImage(token!, ir.galleryList[i]);
-    }
-
-    await ipdb.eliminarImagesSincronizados();
-
-    print("Se termina la sincronizacion");
   }
 }

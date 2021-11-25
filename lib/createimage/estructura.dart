@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:app_contactos/home/model/imagesResponse.dart';
-import 'package:app_contactos/home/provider/imagesProviderDB.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:app_contactos/home/provider/imagesProviderAPI.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:getwidget/components/button/gf_button.dart';
@@ -64,6 +64,10 @@ class _CreateImagePage extends State<CreateImagePage> {
   String titleIngresado = "";
   String descriptionIngresado = "";
   String imgIngresado = "";
+  String longitudIngresado = "";
+  String latitudIngresado = "";
+  String altitudIngresado = "";
+  String tiporedIngresado = "";
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +97,7 @@ class _CreateImagePage extends State<CreateImagePage> {
                         imagen != null ? Image.file(imagen!) : Center(),
                         obtenerCampoTitle(),
                         obtenerCampoDescription(),
-                        obtenerCampoImg(),
+                        //obtenerCampoImg(),
                         botonCrearImagen()
                       ],
                     ),
@@ -186,7 +190,16 @@ class _CreateImagePage extends State<CreateImagePage> {
     return TextFormField(
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(labelText: "IMG", hintText: "jo"),
-      validator: (value) {},
+      validator: (value) {
+        if (value!.length > 0) {
+          return null;
+        } else {
+          return "Los apellidos del contacto no son válidos";
+        }
+      },
+      onSaved: (value) {
+        imgIngresado = value!;
+      },
     );
   }
 
@@ -197,7 +210,7 @@ class _CreateImagePage extends State<CreateImagePage> {
           formKey.currentState!.save();
           crearImage();
           //uploadStatusImage();
-          //subirImagen(imagen!, titleIngresado, descriptionIngresado);
+          subirImagen(imagen!, titleIngresado, descriptionIngresado);
           Navigator.pop(context);
         }
       },
@@ -209,27 +222,45 @@ class _CreateImagePage extends State<CreateImagePage> {
   }
 
   crearImage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = await prefs.getString('token');
+    Position position = await obtenerPosicionGeografica();
+    longitudIngresado = position.longitude.toString();
+    latitudIngresado = position.latitude.toString();
+    altitudIngresado = position.altitude.toString();
     ImageModel cm = ImageModel.fromValues(
-        titleIngresado, descriptionIngresado, imgIngresado);
+        titleIngresado,
+        descriptionIngresado,
+        imgIngresado,
+        longitudIngresado,
+        latitudIngresado,
+        altitudIngresado,
+        tiporedIngresado);
 
-    ImagesProviderDb ipdb = ImagesProviderDb();
-    await ipdb.init();
+    ImagesProviderApi ipdb = ImagesProviderApi();
 
-    var nums = await ipdb.agregarImage(cm);
+    var nums = await ipdb.crearImage(token.toString(), cm);
 
-    var result = await ipdb.obtenerImages();
+    var result = await ipdb.obtenerListadoImages(token.toString());
   }
 
   //fIREDBASE
 
-/*Future<ImageModel> subirImagen(
+  Future<ImageModel> subirImagen(
       File image, String title, String description) async {
-    //SharedPreferences prefs = await SharedPreferences.getInstance();
-    //var token = await prefs.getString('token');
-    //Map<String, String> headers = {"Authorization": token.toString()};
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = await prefs.getString('token');
+
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.mobile) {
+      tiporedIngresado = 'Datos Móviles';
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      tiporedIngresado = 'Wifi';
+    }
+
     var request = http.MultipartRequest(
         "POST", Uri.parse("https://igalery.herokuapp.com/api/gallery/create"));
-    // request.headers.addAll(headers);
+    request.headers["Authorization"] = token.toString();
     var picture = await http.MultipartFile.fromPath("imagen", image.path);
 
     request.files.add(
@@ -237,12 +268,12 @@ class _CreateImagePage extends State<CreateImagePage> {
     );
 
     Position position = await obtenerPosicionGeografica();
-
     request.fields["title"] = title;
     request.fields["description"] = description;
     request.fields["longitud"] = position.longitude.toString();
     request.fields["latitud"] = position.latitude.toString();
     request.fields["altitud"] = position.altitude.toString();
+    request.fields["tipoRed"] = tiporedIngresado;
 
     var response = await request.send();
 
@@ -251,8 +282,6 @@ class _CreateImagePage extends State<CreateImagePage> {
     String rawResponse = utf8.decode(responseData);
 
     var jsonResponse = jsonDecode(rawResponse);
-
-    print(rawResponse);
 
     ImageModel ir = ImageModel(jsonResponse);
 
@@ -288,5 +317,5 @@ class _CreateImagePage extends State<CreateImagePage> {
         heading: 0,
         speed: 0,
         speedAccuracy: 0);
-  }*/
+  }
 }
