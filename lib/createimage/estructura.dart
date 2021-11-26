@@ -133,19 +133,6 @@ class _CreateImagePage extends State<CreateImagePage> {
                   type: GFButtonType.outline2x,
                   fullWidthButton: true,
                 ),
-                GestureDetector(
-                  child: Text("Cámara"),
-                  onTap: () {
-                    //obtenerImagen(ImageSource.camera);
-                  },
-                ),
-                Padding(padding: EdgeInsets.all(15)),
-                GestureDetector(
-                  child: Text("Galería"),
-                  onTap: () {
-                    //obtenerImagen(ImageSource.gallery);
-                  },
-                ),
               ],
             )),
           );
