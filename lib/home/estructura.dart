@@ -60,7 +60,7 @@ class _MyImagessPageState extends State<MyImagessPage> {
         automaticallyImplyLeading: false,
         leading: BtnConectid(),
         title: Text(
-          "Mi Gallery",
+          " Mi Gallery",
           style: GoogleFonts.pacifico(fontSize: 20, color: Colors.white),
         ),
         actions: <Widget>[

@@ -77,7 +77,7 @@ class _CreateImagePage extends State<CreateImagePage> {
         appBar: AppBar(
           backgroundColor: Colors.black87,
           title: Text(
-            "Cargar una Imagen Nueva",
+            "   Cargar una Imagen Nueva",
             style: GoogleFonts.pacifico(fontSize: 22, color: Colors.white),
           ),
         ),
@@ -92,13 +92,15 @@ class _CreateImagePage extends State<CreateImagePage> {
                     child: Column(
                       children: [
                         SizedBox(
-                          height: 8,
+                          height: 5,
                         ),
                         GFButton(
                           onPressed: () {
                             abrirSeleccionOrigen();
                           },
-                          text: "  Cargar Imagen",
+                          text: "Cargar Foto",
+                          textStyle: GoogleFonts.pacifico(
+                              fontSize: 15, color: Colors.white),
                           shape: GFButtonShape.square,
                         ),
                         SizedBox(
@@ -219,7 +221,8 @@ class _CreateImagePage extends State<CreateImagePage> {
           Navigator.pop(context);
         }
       },
-      text: "Subir Foto",
+      text: "Subir Imagen",
+      textStyle: GoogleFonts.pacifico(fontSize: 18, color: Colors.white),
       type: GFButtonType.solid,
       fullWidthButton: true,
       color: Colors.green.shade400,
