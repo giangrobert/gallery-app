@@ -2,11 +2,8 @@ import 'package:app_contactos/home/estructura.dart';
 import 'package:app_contactos/login/model/authResponse.dart';
 import 'package:app_contactos/login/provider/authProvider.dart';
 import 'package:app_contactos/register/estructura.dart';
-import 'package:app_contactos/widgets/circles.dart';
 import 'package:app_contactos/widgets/textFieldContainer.dart';
 import 'package:flutter/material.dart';
-import 'package:getwidget/components/button/gf_button_bar.dart';
-import 'package:getwidget/components/card/gf_card.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,105 +25,141 @@ class _MyLoginPageState extends State<MyLoginPage> {
   Widget build(BuildContext context) {
     validarSesion();
     return Scaffold(
+        backgroundColor: const Color(0xFFfdfded),
         body: SingleChildScrollView(
-      child: Container(
-          child: Form(
-        key: formKey,
-        child: Container(
-          padding: EdgeInsets.all(25.0),
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              SizedBox(height: 100),
-              Image.network(
-                'https://icons-for-free.com/iconfiles/png/512/Gallery-1320568041658802818.png',
-                width: 150,
+          child: Container(
+              child: Form(
+            key: formKey,
+            child: Container(
+              padding: EdgeInsets.all(25.0),
+              alignment: Alignment.center,
+              child: Column(
+                children: [
+                  SizedBox(height: 35),
+                  SizedBox(
+                    height: 220,
+                    child: Image.asset(
+                      'assets/img/home.png',
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Bienvenido a IGalery',
+                    style: GoogleFonts.pacifico(
+                        fontSize: 35, color: Colors.black87),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  obtenerCampoEmail(),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  obtenerCampoContrasena(),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  obtenerBotonIniciarSesion(),
+                ],
               ),
-              SizedBox(height: 20),
-              Text(
-                'Bienvenido a IGalery',
-                style:
-                    GoogleFonts.pacifico(fontSize: 30, color: Colors.black87),
-              ),
-              obtenerCampoEmail(),
-              obtenerCampoContrasena(),
-              obtenerBotonIniciarSesion(),
-              Container(
-                alignment: Alignment.center,
-                child: Row(
-                  children: [
-                    Text("¿Eres nuevo?"),
-                    GestureDetector(
-                        child: Text(
-                          "Regístrate",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.pushNamed(context, MyRegisterPage.ruta);
-                        })
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      )),
-    ));
+            ),
+          )),
+        ));
   }
 
-  TexfieldContainer obtenerCampoEmail() {
-    return TexfieldContainer(
-      child: TextFormField(
-        keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(
-            labelText: "Correo electrónico", hintText: "john.doe@mail.com"),
-        validator: (value) {
-          String patron = r'^[^@]+@[^@]+\.[^@]+$';
-          RegExp regExp = new RegExp(patron);
-          if (regExp.hasMatch(value!)) {
-            return null;
-          } else {
-            return "El email no es válido";
-          }
-        },
-        onSaved: (value) {
-          emailIngresado = value!;
-        },
+  TextFormField obtenerCampoEmail() {
+    return TextFormField(
+      keyboardType: TextInputType.emailAddress,
+      decoration: InputDecoration(
+        labelText: "Correo electrónico",
+        hintText: "correo@gmail.com",
+        hintStyle: TextStyle(color: Colors.black87),
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          borderSide: BorderSide(color: Colors.black87),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          borderSide: BorderSide(color: Colors.black87),
+        ),
+        prefixIcon: Icon(
+          Icons.account_circle_rounded,
+          color: Colors.black87,
+        ),
       ),
+      validator: (value) {
+        String patron = r'^[^@]+@[^@]+\.[^@]+$';
+        RegExp regExp = new RegExp(patron);
+        if (regExp.hasMatch(value!)) {
+          return null;
+        } else {
+          return "El email no es válido";
+        }
+      },
+      onSaved: (value) {
+        emailIngresado = value!;
+      },
     );
   }
 
-  TexfieldContainer obtenerCampoContrasena() {
-    return TexfieldContainer(
-      child: TextFormField(
-        obscureText: true,
-        decoration: InputDecoration(labelText: "Contraseña"),
-        validator: (value) {
-          if (value!.length > 5) {
-            return null;
-          } else {
-            return "La contraseña no cumple requisitos mínimos de seguridad";
-          }
-        },
-        onSaved: (value) {
-          contrasenaIngresada = value!;
-        },
+  TextFormField obtenerCampoContrasena() {
+    return TextFormField(
+      obscureText: true,
+      decoration: InputDecoration(
+        labelText: "Contraseña",
+        hintStyle: TextStyle(color: Colors.black87),
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          borderSide: BorderSide(color: Colors.black87),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          borderSide: BorderSide(color: Colors.black87),
+        ),
+        prefixIcon: Icon(
+          Icons.password_outlined,
+          color: Colors.black87,
+        ),
       ),
+      validator: (value) {
+        if (value!.length > 5) {
+          return null;
+        } else {
+          return "La contraseña no cumple requisitos mínimos de seguridad";
+        }
+      },
+      onSaved: (value) {
+        contrasenaIngresada = value!;
+      },
     );
   }
 
   ElevatedButton obtenerBotonIniciarSesion() {
     return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          onPrimary: Colors.white,
+          primary: Colors.black87,
+          onSurface: Colors.black87,
+          elevation: 20,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          minimumSize: const Size(170, 60),
+        ),
         onPressed: () {
           if (formKey.currentState!.validate()) {
             formKey.currentState!.save();
             validarToken(emailIngresado, contrasenaIngresada);
           }
         },
-        child: Text("Iniciar Sesión"));
+        child: Text(
+          "Iniciar Sesión",
+          style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+                fontSize: 17,
+              ),
+        ));
   }
 
   void validarToken(String email, String contrasena) async {

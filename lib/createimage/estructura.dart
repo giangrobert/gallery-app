@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/getwidget.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -72,9 +73,13 @@ class _CreateImagePage extends State<CreateImagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: const Color(0xFFfdfded),
         appBar: AppBar(
           backgroundColor: Colors.black87,
-          title: Text("Cargar una imagen nueva"),
+          title: Text(
+            "Cargar una Imagen Nueva",
+            style: GoogleFonts.pacifico(fontSize: 22, color: Colors.white),
+          ),
         ),
         body: Container(
             padding: EdgeInsets.all(20.0),
@@ -86,18 +91,31 @@ class _CreateImagePage extends State<CreateImagePage> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        Text('Agrega todos los campos*'),
+                        SizedBox(
+                          height: 8,
+                        ),
                         GFButton(
                           onPressed: () {
                             abrirSeleccionOrigen();
                           },
-                          text: "Cargar Photo",
+                          text: "  Cargar Imagen",
                           shape: GFButtonShape.square,
                         ),
+                        SizedBox(
+                          height: 15,
+                        ),
                         imagen != null ? Image.file(imagen!) : Center(),
+                        SizedBox(
+                          height: 30,
+                        ),
                         obtenerCampoTitle(),
+                        SizedBox(
+                          height: 20,
+                        ),
                         obtenerCampoDescription(),
-                        //obtenerCampoImg(),
+                        SizedBox(
+                          height: 40,
+                        ),
                         botonCrearImagen()
                       ],
                     ),
@@ -142,12 +160,12 @@ class _CreateImagePage extends State<CreateImagePage> {
   TextFormField obtenerCampoTitle() {
     return TextFormField(
       keyboardType: TextInputType.name,
-      decoration: InputDecoration(labelText: "title", hintText: "Jhon"),
+      decoration: InputDecoration(labelText: "Titulo"),
       validator: (value) {
         if (value!.length > 0) {
           return null;
         } else {
-          return "El nombre de contacto no es válido";
+          return "No se ha ingresado un Titulo";
         }
       },
       onSaved: (value) {
@@ -159,12 +177,12 @@ class _CreateImagePage extends State<CreateImagePage> {
   TextFormField obtenerCampoDescription() {
     return TextFormField(
       keyboardType: TextInputType.name,
-      decoration: InputDecoration(labelText: "Description", hintText: "Doe"),
+      decoration: InputDecoration(labelText: "Descripción"),
       validator: (value) {
         if (value!.length > 0) {
           return null;
         } else {
-          return "Los apellidos del contacto no son válidos";
+          return "No se ha ingresado una Descripción";
         }
       },
       onSaved: (value) {
@@ -181,7 +199,7 @@ class _CreateImagePage extends State<CreateImagePage> {
         if (value!.length > 0) {
           return null;
         } else {
-          return "Los apellidos del contacto no son válidos";
+          return "No se ha seleccionado una imagen";
         }
       },
       onSaved: (value) {
@@ -201,7 +219,7 @@ class _CreateImagePage extends State<CreateImagePage> {
           Navigator.pop(context);
         }
       },
-      text: "Crear Photo",
+      text: "Subir Foto",
       type: GFButtonType.solid,
       fullWidthButton: true,
       color: Colors.green.shade400,

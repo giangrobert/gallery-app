@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert' as convert;
 import 'package:app_contactos/widgets/widget_conectid.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
@@ -53,11 +54,15 @@ class _MyImagessPageState extends State<MyImagessPage> {
     obtenerListadoImages();
 
     return Scaffold(
+      backgroundColor: const Color(0xFFfdfded),
       appBar: GFAppBar(
         backgroundColor: Colors.black87,
         automaticallyImplyLeading: false,
         leading: BtnConectid(),
-        title: Text("Mi Gallery"),
+        title: Text(
+          "Mi Gallery",
+          style: GoogleFonts.pacifico(fontSize: 20, color: Colors.white),
+        ),
         actions: <Widget>[
           GFIconButton(
             icon: Icon(
@@ -85,7 +90,10 @@ class _MyImagessPageState extends State<MyImagessPage> {
         onPressed: () {
           Navigator.pushNamed(context, CreateImagePage.ruta);
         },
-        label: Text("Crear Imagen"),
+        label: Text(
+          "Añadir Imagen",
+          style: GoogleFonts.pacifico(fontSize: 15, color: Colors.white),
+        ),
         icon: Icon(
           Icons.add,
         ),
