@@ -6,9 +6,10 @@ class ContactCard extends StatelessWidget {
   String imageDescription = "";
   String imageImg = "";
   String tiporedt = "";
+  void Function()? onPressed;
 
-  ContactCard(
-      this.imageTitle, this.imageDescription, this.imageImg, this.tiporedt);
+  ContactCard(this.imageTitle, this.imageDescription, this.imageImg,
+      this.tiporedt, this.onPressed);
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +38,12 @@ class ContactCard extends StatelessWidget {
           Row(
             children: [
               GFButton(
-                onPressed: () {},
+                onPressed: onPressed,
                 text: "Ubicación",
-                icon: Icon(Icons.remove_red_eye),
+                icon: Icon(
+                  Icons.remove_red_eye,
+                  color: Colors.white,
+                ),
                 shape: GFButtonShape.pills,
                 color: Colors.black,
               ),

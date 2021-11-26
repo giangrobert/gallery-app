@@ -37,7 +37,7 @@ class _MyLoginPageState extends State<MyLoginPage> {
           alignment: Alignment.center,
           child: Column(
             children: [
-              SizedBox(height: 20),
+              SizedBox(height: 100),
               Image.network(
                 'https://icons-for-free.com/iconfiles/png/512/Gallery-1320568041658802818.png',
                 width: 150,

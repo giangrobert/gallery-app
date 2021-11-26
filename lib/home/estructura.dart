@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert' as convert;
 import 'package:app_contactos/widgets/widget_conectid.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:app_contactos/createimage/estructura.dart';
@@ -116,10 +117,15 @@ class _MyImagessPageState extends State<MyImagessPage> {
         imgaeExist =
             'https://igalery.herokuapp.com/api/gallery/obtenerimagen/${irbd.galleryList[i].img.toString()}';
         Widget wd = ContactCard(
-            irbd.galleryList[i].title!,
-            irbd.galleryList[i].description!,
-            imgaeExist,
-            irbd.galleryList[i].tipoRed!);
+          irbd.galleryList[i].title!,
+          irbd.galleryList[i].description!,
+          imgaeExist,
+          irbd.galleryList[i].tipoRed!,
+          () {
+            _showMyDialog(
+                irbd.galleryList[i].latitud!, irbd.galleryList[i].longitud!);
+          },
+        );
         imagesCargados.add(wd);
       }
     }
@@ -134,5 +140,31 @@ class _MyImagessPageState extends State<MyImagessPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
     Navigator.pushNamed(context, MyLoginPage.ruta);
+  }
+
+  Future<void> _showMyDialog(String latitud, String longitud) async {
+    Completer<GoogleMapController> _controller = Completer();
+    final CameraPosition _kGooglePlex = CameraPosition(
+      target: LatLng(double.parse(latitud), double.parse(longitud)),
+      zoom: 14.4746,
+    );
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.black87,
+            title: Text('${latitud} | ${longitud}'),
+          ),
+          body: GoogleMap(
+            initialCameraPosition: _kGooglePlex,
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+            },
+          ),
+        );
+      },
+    );
   }
 }

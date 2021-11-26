@@ -8,6 +8,8 @@
    <application
         android:label="app_contactos"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyBnhGFeo6FHq2bIpFxsmfdWaiTiqoV7PAY"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
